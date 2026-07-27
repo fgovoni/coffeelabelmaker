@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Gerador de Etiqueta</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+    body {
+        font-family: 'Arial Black', Impact, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: #e0e0e0;
+        padding: 30px;
+    }
+    #etiqueta {
+        width: 800px;
+        height: 530px;
+        background: white;
+        border: 12px solid black;
+        box-sizing: border-box;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+    }
+    .header {
+        background: black;
+        color: white;
+        text-align: center;
+        font-size: 52px;
+        padding: 12px 0;
+        letter-spacing: 2px;
+        margin-bottom: 12px;
+    }
+    .main-content {
+        display: flex;
+        flex: 1;
+        border-top: 8px solid black;
+        border-bottom: 8px solid black;
+    }
+    .col-left {
+        width: 32%;
+        border-right: 8px solid black;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .col-right {
+        width: 68%;
+        display: flex;
+        flex-direction: column;
+    }
+    .torra-tipo .label {
+        font-family: Arial, sans-serif;
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    .torra-tipo .value {
+        font-size: 48px;
+        text-align: center;
+    }
+    .details-top {
+        flex: 1;
+        padding: 15px 25px;
+        font-size: 32px;
+        line-height: 1.5;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .details-bottom {
+        background: black;
+        color: white;
+        text-align: center;
+        padding: 15px;
+        font-size: 24px;
+        line-height: 1.5;
+    }
+    .footer {
+        display: flex;
+        height: 90px;
+    }
+    .date-box {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+    }
+    .date-box:first-child {
+        border-right: 8px solid black;
+    }
+    [contenteditable="true"] {
+        outline: none;
+    }
+    [contenteditable="true"]:hover {
+        background: rgba(0, 0, 0, 0.05);
+    }
+    button {
+        margin-top: 25px;
+        padding: 15px 30px;
+        font-size: 20px;
+        font-weight: bold;
+        background: black;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+    button:hover {
+        background: #333;
+    }
+</style>
+</head>
+<body>
+
+<div id="etiqueta">
+    <div class="header" contenteditable="true">IRMÃOS MOSCARDINI</div>
+    <div class="main-content">
+        <div class="col-left">
+            <div class="torra-tipo">
+                <div class="label">TORRA</div>
+                <div class="value" contenteditable="true">CLARA</div>
+            </div>
+            <div class="torra-tipo">
+                <div class="label">TIPO</div>
+                <div class="value" contenteditable="true">ARÁBICA</div>
+            </div>
+        </div>
+        <div class="col-right">
+            <div class="details-top" contenteditable="true">
+                <div>TUPI</div>
+                <div>NATURAL</div>
+                <div>CARAMELO</div>
+            </div>
+            <div class="details-bottom" contenteditable="true">
+                <div>F. SÃO CRISTÓVÃO - 950M</div>
+                <div>CRISTAIS PAULISTA - SP</div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <div class="date-box" contenteditable="true">TORRADO: 29/05/26</div>
+        <div class="date-box" contenteditable="true">ABERTO: 30/05/26</div>
+    </div>
+</div>
+
+<button onclick="gerarImagem()">Gerar Imagem (PNG)</button>
+
+<script>
+    function gerarImagem() {
+        // Escala 2 garante uma imagem com boa resolução (1600x1060px)
+        html2canvas(document.querySelector("#etiqueta"), {scale: 2}).then(canvas => {
+            let link = document.createElement('a');
+            link.download = 'etiqueta_cafe.png';
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+        });
+    }
+</script>
+
+</body>
+</html>
