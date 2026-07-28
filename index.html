@@ -26,7 +26,7 @@
         border-radius: 8px;
     }
 
-    select, button#btnGenerate {
+    select.interface-select, button#btnGenerate {
         padding: 12px 20px;
         font-size: 18px;
         font-weight: bold;
@@ -34,7 +34,7 @@
         cursor: pointer;
     }
 
-    select {
+    select.interface-select {
         border: 2px solid black;
         width: 300px;
     }
@@ -58,10 +58,10 @@
     .label-design {
         width: 800px;
         height: 530px;
-        min-width: 800px; /* Trava a largura mínima */
-        max-width: 800px; /* Trava a largura máxima */
-        min-height: 530px; /* Trava a altura mínima */
-        max-height: 530px; /* Trava a altura máxima */
+        min-width: 800px;
+        max-width: 800px;
+        min-height: 530px;
+        max-height: 530px;
         background: white;
         border: 12px solid black;
         box-sizing: border-box;
@@ -69,8 +69,8 @@
         display: flex;
         flex-direction: column;
         display: none;
-        text-transform: uppercase; /* Força letras em maiúsculo */
-        overflow: hidden; /* Impede expansão da caixa */
+        text-transform: uppercase;
+        overflow: hidden;
     }
 
     .label-design.active {
@@ -116,9 +116,35 @@
         margin-bottom: 5px;
     }
 
-    .torra-tipo .value {
+    /* SELECT CUSTOMIZADO */
+    .custom-select {
+        appearance: none;
+        -webkit-appearance: none;
+        background: transparent;
+        border: none;
+        font-family: inherit;
+        font-size: inherit;
+        font-weight: inherit;
+        color: inherit;
         text-align: center;
-        white-space: nowrap; /* Impede a quebra de palavra */
+        text-align-last: center;
+        cursor: pointer;
+        width: 100%;
+        text-transform: uppercase;
+        outline: none;
+        padding: 0;
+        margin: 0;
+    }
+    .custom-select:hover {
+        background: rgba(0, 0, 0, 0.05);
+    }
+    .custom-select option {
+        color: black;
+        background: white;
+    }
+
+    .torra-tipo .value {
+        white-space: nowrap;
         overflow: hidden;
     }
 
@@ -132,7 +158,6 @@
         justify-content: center;
     }
 
-    /* Garante que notas e origens fiquem em 1 linha */
     .details-top div, .details-bottom div {
         white-space: nowrap;
         overflow: hidden;
@@ -153,6 +178,24 @@
     }
     [contenteditable="true"]:hover {
         background: rgba(0, 0, 0, 0.05);
+    }
+
+    /* DATAS CUSTOMIZADAS */
+    .date-container {
+        position: relative;
+        cursor: pointer;
+    }
+    .date-container:hover {
+        background: rgba(0, 0, 0, 0.05);
+    }
+    .hidden-date {
+        opacity: 0;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
     }
 
     /* === Design 1 (Moscardini) === */
@@ -186,7 +229,7 @@
         font-size: 60px;
     }
     #etiqueta2 .torra-tipo .value {
-        font-size: 48px; /* Reduzido de 64px para não estourar a caixa com a palavra 'ARÁBICA' */
+        font-size: 48px;
     }
     #etiqueta2 .footer {
         display: flex;
@@ -211,13 +254,12 @@
         justify-content: flex-end;
         padding-right: 25px;
     }
-
 </style>
 </head>
 <body>
 
 <div id="controles">
-    <select id="selectDesign" onchange="changeDesign()">
+    <select id="selectDesign" class="interface-select" onchange="changeDesign()">
         <option value="1">Design 1 (Pote)</option>
         <option value="2">Design 2 (Capsula)</option>
     </select>
@@ -225,18 +267,25 @@
 </div>
 
 <div class="label-preview-area">
-    <!-- Label 1 (Irmãos Moscardini) - Ativo por padrão -->
+    <!-- Label 1 (Irmãos Moscardini) -->
     <div id="etiqueta1" class="label-design active">
         <div class="header" contenteditable="true">IRMÃOS MOSCARDINI</div>
         <div class="main-content">
             <div class="col-left">
                 <div class="torra-tipo">
                     <div class="label">TORRA</div>
-                    <div class="value" contenteditable="true">CLARA</div>
+                    <select class="custom-select value">
+                        <option value="CLARA" selected>CLARA</option>
+                        <option value="MÉDIA">MÉDIA</option>
+                        <option value="ESCURA">ESCURA</option>
+                    </select>
                 </div>
                 <div class="torra-tipo">
                     <div class="label">TIPO</div>
-                    <div class="value" contenteditable="true">ARÁBICA</div>
+                    <select class="custom-select value">
+                        <option value="ARÁBICA" selected>ARÁBICA</option>
+                        <option value="CANÉFORA">CANÉFORA</option>
+                    </select>
                 </div>
             </div>
             <div class="col-right">
@@ -252,23 +301,36 @@
             </div>
         </div>
         <div class="footer">
-            <div class="date-box" contenteditable="true">TORRADO: 29/05/26</div>
-            <div class="date-box" contenteditable="true">ABERTO: 30/05/26</div>
+            <div class="date-box date-container">
+                <span class="date-text" data-prefix="TORRADO: ">TORRADO: 29/05/26</span>
+                <input type="date" class="hidden-date" onchange="updateDateText(this)">
+            </div>
+            <div class="date-box date-container">
+                <span class="date-text" data-prefix="ABERTO: ">ABERTO: 30/05/26</span>
+                <input type="date" class="hidden-date" onchange="updateDateText(this)">
+            </div>
         </div>
     </div>
 
-    <!-- Label 2 (Ciro Coffee) - Oculto por padrão -->
+    <!-- Label 2 (Ciro Coffee) -->
     <div id="etiqueta2" class="label-design">
         <div class="header" contenteditable="true">CIRO COFFEE</div>
         <div class="main-content">
             <div class="col-left">
                 <div class="torra-tipo">
                     <div class="label">TORRA</div>
-                    <div class="value" contenteditable="true">MÉDIA</div>
+                    <select class="custom-select value">
+                        <option value="CLARA">CLARA</option>
+                        <option value="MÉDIA" selected>MÉDIA</option>
+                        <option value="ESCURA">ESCURA</option>
+                    </select>
                 </div>
                 <div class="torra-tipo">
                     <div class="label">TIPO</div>
-                    <div class="value" contenteditable="true">ARÁBICA</div>
+                    <select class="custom-select value">
+                        <option value="ARÁBICA" selected>ARÁBICA</option>
+                        <option value="CANÉFORA">CANÉFORA</option>
+                    </select>
                 </div>
             </div>
             <div class="col-right">
@@ -284,9 +346,15 @@
             </div>
         </div>
         <div class="footer">
-            <div class="left-dates" contenteditable="true">
-                <div>TORRADO: 27/04/26</div>
-                <div>ENVASADO: 21/05/26</div>
+            <div class="left-dates">
+                <div class="date-container">
+                    <span class="date-text" data-prefix="TORRADO: ">TORRADO: 27/04/26</span>
+                    <input type="date" class="hidden-date" onchange="updateDateText(this)">
+                </div>
+                <div class="date-container">
+                    <span class="date-text" data-prefix="ENVASADO: ">ENVASADO: 21/05/26</span>
+                    <input type="date" class="hidden-date" onchange="updateDateText(this)">
+                </div>
             </div>
             <div class="right-weight" contenteditable="true">20gr</div>
         </div>
@@ -298,6 +366,16 @@
         const designNum = document.getElementById('selectDesign').value;
         document.querySelectorAll('.label-design').forEach(el => el.classList.remove('active'));
         document.getElementById(`etiqueta${designNum}`).classList.add('active');
+    }
+
+    function updateDateText(input) {
+        if (!input.value) return;
+        const [year, month, day] = input.value.split('-');
+        const shortYear = year.slice(-2);
+        const formatted = `${day}/${month}/${shortYear}`;
+        const span = input.previousElementSibling;
+        const prefix = span.getAttribute('data-prefix') || '';
+        span.textContent = prefix + formatted;
     }
 
     function gerarImagem() {
