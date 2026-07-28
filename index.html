@@ -58,13 +58,19 @@
     .label-design {
         width: 800px;
         height: 530px;
+        min-width: 800px; /* Trava a largura mínima */
+        max-width: 800px; /* Trava a largura máxima */
+        min-height: 530px; /* Trava a altura mínima */
+        max-height: 530px; /* Trava a altura máxima */
         background: white;
         border: 12px solid black;
         box-sizing: border-box;
         padding: 12px;
         display: flex;
         flex-direction: column;
-        display: none; /* Oculto por padrão, JavaScript mostra o correto */
+        display: none;
+        text-transform: uppercase; /* Força letras em maiúsculo */
+        overflow: hidden; /* Impede expansão da caixa */
     }
 
     .label-design.active {
@@ -112,6 +118,8 @@
 
     .torra-tipo .value {
         text-align: center;
+        white-space: nowrap; /* Impede a quebra de palavra */
+        overflow: hidden;
     }
 
     .details-top {
@@ -122,6 +130,13 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
+    }
+
+    /* Garante que notas e origens fiquem em 1 linha */
+    .details-top div, .details-bottom div {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .details-bottom {
@@ -171,7 +186,7 @@
         font-size: 60px;
     }
     #etiqueta2 .torra-tipo .value {
-        font-size: 64px;
+        font-size: 48px; /* Reduzido de 64px para não estourar a caixa com a palavra 'ARÁBICA' */
     }
     #etiqueta2 .footer {
         display: flex;
@@ -260,7 +275,7 @@
                 <div class="details-top" contenteditable="true">
                     <div>CATUAÍ VERMELHO</div>
                     <div>NATURAL</div>
-                    <div>CHOCOLATE</div>
+                    <div>CARAMELO / CHOCOLATE / AMENDÔAS</div>
                 </div>
                 <div class="details-bottom" contenteditable="true">
                     <div>F. JULLIANA - 1200M</div>
@@ -280,18 +295,12 @@
 
 <script>
     function changeDesign() {
-        // Obter o valor do design selecionado
         const designNum = document.getElementById('selectDesign').value;
-
-        // Ocultar todas as etiquetas
         document.querySelectorAll('.label-design').forEach(el => el.classList.remove('active'));
-
-        // Mostrar a etiqueta selecionada
         document.getElementById(`etiqueta${designNum}`).classList.add('active');
     }
 
     function gerarImagem() {
-        // Encontrar a etiqueta que está visível no momento
         let activeLabel = document.querySelector('.label-design.active');
         
         if (!activeLabel) {
@@ -299,10 +308,8 @@
             return;
         }
 
-        // Definir um nome de arquivo adequado
         let filename = (activeLabel.id === 'etiqueta1') ? 'etiqueta_moscardini.png' : 'etiqueta_ciro_coffee.png';
 
-        // Escala 2 garante uma imagem com boa resolução (1600x1060px)
         html2canvas(activeLabel, {scale: 2}).then(canvas => {
             let link = document.createElement('a');
             link.download = filename;
