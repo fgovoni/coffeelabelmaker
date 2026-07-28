@@ -1,8 +1,8 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Gerador de Etiqueta</title>
+<title>Gerador de Etiquetas de Café</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
     body {
@@ -13,7 +13,49 @@
         background: #e0e0e0;
         padding: 30px;
     }
-    #etiqueta {
+
+    /* Controles da Interface */
+    #controles {
+        width: 800px;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        background: white;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        border-radius: 8px;
+    }
+
+    select, button#btnGenerate {
+        padding: 12px 20px;
+        font-size: 18px;
+        font-weight: bold;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    select {
+        border: 2px solid black;
+        width: 300px;
+    }
+
+    button#btnGenerate {
+        background: black;
+        color: white;
+        border: none;
+        transition: background 0.2s;
+    }
+
+    button#btnGenerate:hover {
+        background: #333;
+    }
+
+    /* Contêiner da Etiqueta */
+    .label-preview-area {
+        position: relative;
+    }
+
+    .label-design {
         width: 800px;
         height: 530px;
         background: white;
@@ -22,22 +64,30 @@
         padding: 12px;
         display: flex;
         flex-direction: column;
+        display: none; /* Oculto por padrão, JavaScript mostra o correto */
     }
+
+    .label-design.active {
+        display: flex;
+    }
+
+    /* Estilos Comuns */
     .header {
         background: black;
         color: white;
         text-align: center;
-        font-size: 52px;
         padding: 12px 0;
         letter-spacing: 2px;
         margin-bottom: 12px;
     }
+
     .main-content {
         display: flex;
         flex: 1;
         border-top: 8px solid black;
         border-bottom: 8px solid black;
     }
+
     .col-left {
         width: 32%;
         border-right: 8px solid black;
@@ -46,21 +96,24 @@
         flex-direction: column;
         justify-content: space-between;
     }
+
     .col-right {
         width: 68%;
         display: flex;
         flex-direction: column;
     }
+
     .torra-tipo .label {
         font-family: Arial, sans-serif;
         font-size: 20px;
         font-weight: bold;
         margin-bottom: 5px;
     }
+
     .torra-tipo .value {
-        font-size: 48px;
         text-align: center;
     }
+
     .details-top {
         flex: 1;
         padding: 15px 25px;
@@ -70,6 +123,7 @@
         flex-direction: column;
         justify-content: center;
     }
+
     .details-bottom {
         background: black;
         color: white;
@@ -78,83 +132,180 @@
         font-size: 24px;
         line-height: 1.5;
     }
-    .footer {
-        display: flex;
-        height: 90px;
-    }
-    .date-box {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 26px;
-    }
-    .date-box:first-child {
-        border-right: 8px solid black;
-    }
+
     [contenteditable="true"] {
         outline: none;
     }
     [contenteditable="true"]:hover {
         background: rgba(0, 0, 0, 0.05);
     }
-    button {
-        margin-top: 25px;
-        padding: 15px 30px;
+
+    /* === Design 1 (Moscardini) === */
+    #etiqueta1 .header {
+        font-size: 52px;
+    }
+    #etiqueta1 .main-content {
+        margin-bottom: 0px;
+    }
+    #etiqueta1 .torra-tipo .value {
+        font-size: 48px;
+    }
+    #etiqueta1 .footer {
+        display: flex;
+        height: 90px;
+        margin-top: 12px;
+    }
+    #etiqueta1 .date-box {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+    }
+    #etiqueta1 .date-box:first-child {
+        border-right: 8px solid black;
+    }
+
+    /* === Design 2 (Ciro Coffee) === */
+    #etiqueta2 .header {
+        font-size: 60px;
+    }
+    #etiqueta2 .torra-tipo .value {
+        font-size: 64px;
+    }
+    #etiqueta2 .footer {
+        display: flex;
+        height: 90px;
+    }
+    #etiqueta2 .left-dates {
+        width: 60%;
+        border-right: 8px solid black;
+        padding: 10px 15px;
         font-size: 20px;
-        font-weight: bold;
-        background: black;
-        color: white;
-        border: none;
-        cursor: pointer;
-        border-radius: 4px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        line-height: 1.4;
     }
-    button:hover {
-        background: #333;
+    #etiqueta2 .right-weight {
+        width: 40%;
+        font-size: 48px;
+        font-family: 'Arial Black', sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 25px;
     }
+
 </style>
 </head>
 <body>
 
-<div id="etiqueta">
-    <div class="header" contenteditable="true">IRMÃOS MOSCARDINI</div>
-    <div class="main-content">
-        <div class="col-left">
-            <div class="torra-tipo">
-                <div class="label">TORRA</div>
-                <div class="value" contenteditable="true">CLARA</div>
+<div id="controles">
+    <select id="selectDesign" onchange="changeDesign()">
+        <option value="1">Design 1 (Irmãos Moscardini)</option>
+        <option value="2">Design 2 (Ciro Coffee)</option>
+    </select>
+    <button id="btnGenerate" onclick="gerarImagem()">Gerar Imagem (PNG)</button>
+</div>
+
+<div class="label-preview-area">
+    <!-- Label 1 (Irmãos Moscardini) - Ativo por padrão -->
+    <div id="etiqueta1" class="label-design active">
+        <div class="header" contenteditable="true">IRMÃOS MOSCARDINI</div>
+        <div class="main-content">
+            <div class="col-left">
+                <div class="torra-tipo">
+                    <div class="label">TORRA</div>
+                    <div class="value" contenteditable="true">CLARA</div>
+                </div>
+                <div class="torra-tipo">
+                    <div class="label">TIPO</div>
+                    <div class="value" contenteditable="true">ARÁBICA</div>
+                </div>
             </div>
-            <div class="torra-tipo">
-                <div class="label">TIPO</div>
-                <div class="value" contenteditable="true">ARÁBICA</div>
+            <div class="col-right">
+                <div class="details-top" contenteditable="true">
+                    <div>TUPI</div>
+                    <div>NATURAL</div>
+                    <div>CARAMELO</div>
+                </div>
+                <div class="details-bottom" contenteditable="true">
+                    <div>F. SÃO CRISTÓVÃO - 950M</div>
+                    <div>CRISTAIS PAULISTA - SP</div>
+                </div>
             </div>
         </div>
-        <div class="col-right">
-            <div class="details-top" contenteditable="true">
-                <div>TUPI</div>
-                <div>NATURAL</div>
-                <div>CARAMELO</div>
-            </div>
-            <div class="details-bottom" contenteditable="true">
-                <div>F. SÃO CRISTÓVÃO - 950M</div>
-                <div>CRISTAIS PAULISTA - SP</div>
-            </div>
+        <div class="footer">
+            <div class="date-box" contenteditable="true">TORRADO: 29/05/26</div>
+            <div class="date-box" contenteditable="true">ABERTO: 30/05/26</div>
         </div>
     </div>
-    <div class="footer">
-        <div class="date-box" contenteditable="true">TORRADO: 29/05/26</div>
-        <div class="date-box" contenteditable="true">ABERTO: 30/05/26</div>
+
+    <!-- Label 2 (Ciro Coffee) - Oculto por padrão -->
+    <div id="etiqueta2" class="label-design">
+        <div class="header" contenteditable="true">CIRO COFFEE</div>
+        <div class="main-content">
+            <div class="col-left">
+                <div class="torra-tipo">
+                    <div class="label">TORRA</div>
+                    <div class="value" contenteditable="true">MÉDIA</div>
+                </div>
+                <div class="torra-tipo">
+                    <div class="label">TIPO</div>
+                    <div class="value" contenteditable="true">ARÁBICA</div>
+                </div>
+            </div>
+            <div class="col-right">
+                <div class="details-top" contenteditable="true">
+                    <div>CATUAÍ VERMELHO</div>
+                    <div>NATURAL</div>
+                    <div>CHOCOLATE</div>
+                </div>
+                <div class="details-bottom" contenteditable="true">
+                    <div>F. JULLIANA - 1200M</div>
+                    <div>CHAPADA DIAMANTINA - BA</div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="left-dates" contenteditable="true">
+                <div>TORRADO: 27/04/26</div>
+                <div>ENVASADO: 21/05/26</div>
+            </div>
+            <div class="right-weight" contenteditable="true">20gr</div>
+        </div>
     </div>
 </div>
 
-<button onclick="gerarImagem()">Gerar Imagem (PNG)</button>
-
 <script>
+    function changeDesign() {
+        // Obter o valor do design selecionado
+        const designNum = document.getElementById('selectDesign').value;
+
+        // Ocultar todas as etiquetas
+        document.querySelectorAll('.label-design').forEach(el => el.classList.remove('active'));
+
+        // Mostrar a etiqueta selecionada
+        document.getElementById(`etiqueta${designNum}`).classList.add('active');
+    }
+
     function gerarImagem() {
+        // Encontrar a etiqueta que está visível no momento
+        let activeLabel = document.querySelector('.label-design.active');
+        
+        if (!activeLabel) {
+            alert("Erro: Nenhum design ativo encontrado.");
+            return;
+        }
+
+        // Definir um nome de arquivo adequado
+        let filename = (activeLabel.id === 'etiqueta1') ? 'etiqueta_moscardini.png' : 'etiqueta_ciro_coffee.png';
+
         // Escala 2 garante uma imagem com boa resolução (1600x1060px)
-        html2canvas(document.querySelector("#etiqueta"), {scale: 2}).then(canvas => {
+        html2canvas(activeLabel, {scale: 2}).then(canvas => {
             let link = document.createElement('a');
-            link.download = 'etiqueta_cafe.png';
+            link.download = filename;
             link.href = canvas.toDataURL("image/png");
             link.click();
         });
